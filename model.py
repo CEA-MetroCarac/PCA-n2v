@@ -58,7 +58,6 @@ def compute_scores(
             f_dir / f"{d_name}_components.npy",
             pca.components_.astype(np.float16),
         )
-    # We reshape the scores.
     return scores
 
 
@@ -169,7 +168,6 @@ def reconstruct(
 
 def data_augment(data: np.ndarray):
     # This function augments the data by performing flips and transpositions.
-    # print("Augmenting data...")
     if data.ndim == 2:  # data times 8
         res = [np.rot90(data, k=i) for i in range(4)]
         for dat in [np.rot90(data, k=i) for i in range(4)]:
@@ -186,5 +184,4 @@ def data_augment(data: np.ndarray):
         for dat in res2:
             res = res + [np.fliplr(dat)]
         res = res + res2
-    # print(f"Data was augmented by a factor {len(res)}.")
     return res
