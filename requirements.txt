@@ -3,6 +3,8 @@ scipy
 tifffile
 matplotlib
 scikit-learn
+scikit-image
 pandas
 tensorflow<2.16
 n2v
+sparse
