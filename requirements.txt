@@ -1,0 +1,8 @@
+numpy
+scipy
+tifffile
+matplotlib
+scikit-learn
+pandas
+tensorflow<2.16
+n2v
