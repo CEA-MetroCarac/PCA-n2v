@@ -10,3 +10,4 @@ n2v
 # n2v@git+https://github.com/juglab/n2v.git
 tqdm
 ipywidgets  # for tqdm progress in notebook
+typing_extensions
