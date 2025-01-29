@@ -31,6 +31,10 @@ jupyter notebook
 
 then load the file `Example_denoising.ipynb`.
 
+## Example data
+
+The example data for the repository are available at the following [Zenodo page](https://zenodo.org/records/14761145). We use the file `Alga_raw.npz` placed in the `./data` directory.
+
 ## Note on data import
 
 Appropriate data import is necessary before running PCA-n2v. MSI data should than be transformed into a matrix (.npy) or better a sparse matrix (.npz) before further processing. Keep in mind that the format `float16` is not supported in .npz matrixes.
