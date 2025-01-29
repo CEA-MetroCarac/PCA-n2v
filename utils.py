@@ -4,6 +4,7 @@ import numpy as np
 from n2v.internals.N2V_DataGenerator import N2V_DataGenerator
 from scipy import sparse
 import os
+import contextlib
 import pathlib
 from tifffile import imwrite, imread
 from sklearn.preprocessing import StandardScaler
@@ -35,10 +36,7 @@ def memory_alloc(n_go: int):
 
 def reshape_2d(data: np.ndarray):
     """Reshape a 3d of 4d matrix into a 2d matrix."""
-    mz = data.shape[-1]
-    n_pix = int(data.size / mz)
-    data = data.reshape(n_pix, mz)
-    return data
+    return data.reshape(-1, data.shape[-1])
 
 
 def tif_to_matrix(dir_tif: os.PathLike, as_sparse: bool = True):
@@ -170,6 +168,17 @@ def load_data(f_name: os.PathLike):
     return np.array(data.todense())
 
 
+@contextlib.contextmanager
+def redirect_output(redirect: bool):
+    if redirect:
+        # Redirect messages to devnull
+        with open(os.devnull, "w") as dn:
+            with contextlib.redirect_stderr(dn), contextlib.redirect_stdout(dn):
+                yield
+    else:
+        yield
+
+
 def compute_scores(
     data: np.ndarray,
     f_dir: os.PathLike,
@@ -207,6 +216,7 @@ def denoise_scores(
     patch_shape: Optional[Tuple[int, ...]] = None,
     train_epochs: int = 100,
     split_val: float = 0.9,
+    hide_output: bool = False,
 ):
     basedir = pathlib.Path(basedir)
     dir_model = basedir / model_name
@@ -230,7 +240,8 @@ def denoise_scores(
 
     # Generate patches
     datagen = N2V_DataGenerator()
-    patches = datagen.generate_patches_from_list(dat_j, shape=patch_shape)
+    with redirect_output(hide_output):
+        patches = datagen.generate_patches_from_list(dat_j, shape=patch_shape)
 
     np.random.shuffle(patches)
     patches = patches.astype(np.float32)  # float16 generates errors
@@ -258,7 +269,8 @@ def denoise_scores(
     model = N2V(config, model_name, basedir=str(basedir))
 
     # Start training. The model saves itself automatically.
-    history = model.train(X, X_val)
+    with redirect_output(hide_output):
+        history = model.train(X, X_val)
 
     # Save history and denoised images
     history = pd.DataFrame.from_dict(history.history)
@@ -269,7 +281,8 @@ def denoise_scores(
     elif len(patch_shape) == 3:
         axes = "ZYX"
 
-    score_dn = model.predict(scores_j, axes)
+    with redirect_output(hide_output):
+        score_dn = model.predict(scores_j, axes)
     imwrite(dir_denoised / f"score_{j:04}.tiff", score_dn)
 
 
@@ -287,9 +300,8 @@ def reconstruct(
 
     # Load components and scores
     components = np.load(f_components)
-    scores_dn = tif_to_matrix(dir_scores_dn)
-
-    scores_dn = np.moveaxis(np.array(scores_dn), 0, 2)
+    scores_dn = tif_to_matrix(dir_scores_dn, as_sparse=False)
+    # scores_dn = np.moveaxis(scores_dn, 0, 2)
     scores_dn = reshape_2d(scores_dn)
 
     # Reconstruct denoised data
