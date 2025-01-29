@@ -14,7 +14,7 @@ from tifffile import imwrite
 from utils import reshape_2d, redirect_output, tif_to_matrix
 
 
-def memory_alloc(n_go: int):
+def memory_alloc(n_gb: int):
     """
     Allocate memory on the GPU. If not activated the code will
     by default fill the GPU, without any performance gain.
@@ -26,7 +26,7 @@ def memory_alloc(n_go: int):
                 gpus[0],
                 [
                     tf.config.experimental.VirtualDeviceConfiguration(
-                        memory_limit=1024 * n_go
+                        memory_limit=1024 * n_gb
                     )
                 ],
             )

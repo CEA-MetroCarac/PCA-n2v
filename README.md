@@ -1,7 +1,35 @@
 # PCA-n2v
 
-This repository contains
+This repository contains the implementation of `PCA-n2v` (Noise2Void), based on the package [n2v](https://github.com/juglab/n2v).
 
+## Running the example notebook
+
+This code should run on recent versions of Python, though the package `n2v` cannot be installed on 3.12+.
+
+From a clean virtual or conda environment install the requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+If this fails due to missing `git`, install a copy of git from [here](https://git-scm.com/downloads).
+We must install `n2v` from GitHub in order to have certain bugfixes which are not yet released to `PyPi`.
+
+If you have a CUDA-capable GPU then you can also run:
+
+```bash
+pip install -r "tensorflow[and-cuda]<2.16"
+```
+
+though it would be best to follow the `n2v` readme for configuring Tensorflow and CUDA appropriately.
+
+From this folder launch the Jupyter notebook server:
+
+```
+jupyter notebook 
+```
+
+then load the file `Example_denoising.ipynb`.
 
 ## Note on data importation
 

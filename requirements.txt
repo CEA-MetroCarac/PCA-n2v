@@ -6,8 +6,8 @@ scikit-learn
 scikit-image
 pandas
 tensorflow<2.16
-n2v
-# n2v@git+https://github.com/juglab/n2v.git
+n2v @ git+https://github.com/juglab/n2v@c61b3b4
+notebook
 tqdm
 ipywidgets  # for tqdm progress in notebook
 typing_extensions
