@@ -39,7 +39,7 @@ The example data for the repository are available at the following [Zenodo page]
 
 Appropriate data import is necessary before running PCA-n2v. MSI data should than be transformed into a matrix (.npy) or better a sparse matrix (.npz) before further processing. Keep in mind that the format `float16` is not supported in .npz matrixes.
 
-For IonTOF systems, we recommend exporting all the data in `.txt` format. This creates as many files as are m/z. The function `iontof_to_matrix` has been especially implemented for this purpose.
+For IonTOF systems, we recommend exporting all the data in `.txt` format. This creates as many files as are selected peaks. The function `iontof_to_matrix` has been especially implemented for this purpose.
 
 For PHI data, we recommend exporting the data as `.tif` images in a dedicated folder. Warning: this functions only if the maximum value of pixels is 256, otherwise you might need to split one peak into several peaks. The function `tif_to_matrix` performs the task of turning a set of `.tif` images into a matrix.
 
