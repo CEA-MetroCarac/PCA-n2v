@@ -92,7 +92,9 @@ def txt_to_matrix(
     dir_save: Optional[os.PathLike] = None,
 ):
     """
-    Transforms a txt file exported from SurfaceLab into a matrix."""
+    Transforms a txt file exported from SurfaceLab into a matrix.
+    If dir_save, also saves it as a .npy matrix."""
+    
     if d_type == "2d":
         names = ["x", "y", "i"]
         dtype = {"x": int, "y": int, "i": float}
@@ -129,7 +131,7 @@ def txt_to_matrix(
         filename = pathlib.Path(f_csv).stem
         sparse.save_npz(
             pathlib.Path(dir_save) / f"{filename}.npy",
-            sparse.csr_matrix(data_temp)
+            data_temp
         )
     return data_temp, shape
 
