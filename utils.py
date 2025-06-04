@@ -116,16 +116,15 @@ def txt_to_matrix(
     i = data_mz["i"].to_numpy().astype(int)
 
     if d_type == "2d":
-        shape = (len(x), len(y))
-        data_temp = np.zeros(shape=shape)
-        data_temp[x, y] = i
+        shape = (np.max(x) + 1, np.max(y) + 1)
+        data_temp = np.empty(shape = shape)
+        data[x, y] = i
     elif d_type == "3d":
         z = data_mz["z"].to_numpy()
-        shape = (len(x), len(y), len(z))
-        data_temp = np.zeros(shape=shape)
+        shape = (np.max(x) + 1, np.max(y) + 1, np.max(z) + 1)
+        data_temp = np.empty(shape = shape)
         data_temp[x, y, z] = i
-
-    data_temp = data_temp.flatten()
+        
     if dir_save is not None:
         filename = pathlib.Path(f_csv).stem
         sparse.save_npz(
