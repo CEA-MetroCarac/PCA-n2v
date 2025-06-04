@@ -6,7 +6,6 @@ import tensorflow as tf
 import pandas as pd
 
 from n2v.internals.N2V_DataGenerator import N2V_DataGenerator
-from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from n2v.models import N2VConfig, N2V
 from tifffile import imwrite
@@ -45,10 +44,14 @@ def compute_scores(
     data = reshape_2d(data)
 
     # We now scale our data and compute the scores.
-    scale = StandardScaler()
-    data = scale.fit_transform(data)
+    
+    flat_shape = data.shape
+    mn = np.mean(data, axis = 0)
+    mn = np.tile(mn, (flat_shape[0], 1))
+    data_scale = (data - mn)/np.sqrt(mn)
+
     pca = PCA()
-    scores = pca.fit_transform(data)
+    scores = pca.fit_transform(data_scale)
     if save:
         np.save(
             f_dir / f"{d_name}_scores.npy",
@@ -149,9 +152,9 @@ def reconstruct(
 
     data = data.astype(np.uint32)
     data = reshape_2d(data)
-    means = np.mean(data, axis=1)
-    std = np.std(data, axis=1)
-
+    mn = np.mean(data, axis = 0)
+    mn = np.tile(mn, (flat_shape[0], 1))
+    
     # Load components and scores
     components = np.load(f_components)
     scores_dn = tif_to_matrix(dir_scores_dn, as_sparse=False)
@@ -160,7 +163,8 @@ def reconstruct(
 
     # Reconstruct denoised data
     data_dn = scores_dn @ components
-    data_dn = (data_dn.T * std + means).T
+    
+    data_dn = data_dn* np.sqrt(mn) + mn
     data_dn[data_dn < 0] = 0
 
     return data_dn
