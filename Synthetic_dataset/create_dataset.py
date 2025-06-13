@@ -73,3 +73,12 @@ def create_synthetic (
         np.save(os.path.join(dir_save, 'noisy_stack.npz'), stack_simulated)
         
     return stack_gt, stack_simulated
+
+if __name__ == "__main__":
+
+    n_mz = 100
+    stack_gt, stack_simulated = create_synthetic(
+        ".",
+        n_mz=nmz,
+        ".",
+    )
